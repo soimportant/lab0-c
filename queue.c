@@ -150,7 +150,31 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     /* TODO: You need to fix up this code. */
     /* TODO: Remove the above comment when you are about to implement. */
-    q->head = q->head->next;
+
+    if (!q || !q->size)
+        return false;
+
+    list_ele_t *del = q->head;
+
+    if (sp) {
+        /* make bufsize be the limit of string length */
+        size_t len = strlen(del->value);
+        if (len < bufsize)
+            bufsize = len;
+        else
+            bufsize--;
+
+        for (size_t i = 0; i < bufsize; i++)
+            sp[i] = del->value[i];
+
+        sp[bufsize] = '\0';
+    }
+
+    q->head = del->next;
+
+    free(del->value);
+    free(del);
+
     return true;
 }
 
@@ -160,7 +184,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    if (!q || !q->head)
+    if (!q)
         return 0;
 
     return q->size;
