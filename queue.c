@@ -175,6 +175,8 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     free(del->value);
     free(del);
 
+    q->size--;
+
     return true;
 }
 
@@ -201,6 +203,25 @@ void q_reverse(queue_t *q)
 {
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+
+    if (!q || q->size <= 1)
+        return;
+
+    list_ele_t *prev = NULL, *now = q->head, *nxt = q->head->next;
+    q->tail = q->head;
+
+    while (1) {
+        now->next = prev;
+        prev = now;
+        now = nxt;
+
+        if (!now)
+            break;
+
+        nxt = now->next;
+    }
+
+    q->head = prev;
 }
 
 /*
