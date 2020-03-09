@@ -229,8 +229,87 @@ void q_reverse(queue_t *q)
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
+
+
+list_ele_t *mergeTwoList(list_ele_t *left, list_ele_t *right)
+{
+    if (!right)
+        return left;
+
+    if (!left)
+        return right;
+
+    list_ele_t *head = NULL, **now = NULL;
+
+    while (left || right) {
+        if (!right || (left && strcmp(left->value, right->value) < 0)) {
+            if (!head) {
+                head = left;
+                now = &head;
+            } else {
+                *now = left;
+            }
+            left = left->next;
+        } else {
+            if (!head) {
+                head = right;
+                now = &head;
+            } else {
+                *now = right;
+            }
+            right = right->next;
+        }
+
+        now = &(*now)->next;
+    }
+
+    return head;
+}
+
+list_ele_t *mergeSort(list_ele_t *head)
+{
+    if (!head || !head->next)
+        return head;
+
+    list_ele_t *left = head, *right = head;
+
+    while (right && right->next) {
+        left = left->next;
+        right = right->next->next;
+    }
+
+    if (!left->next) {
+        right = left;
+        left = head;
+        left->next = NULL;
+    } else {
+        right = left->next;
+        left->next = NULL;
+        left = head;
+    }
+
+    left = mergeSort(left);
+    right = mergeSort(right);
+
+    head = mergeTwoList(left, right);
+
+    return head;
+}
+
 void q_sort(queue_t *q)
 {
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+
+    if (!q || !q->size)
+        return;
+
+    q->head = mergeSort(q->head);
+
+    list_ele_t *now = q->head;
+
+    while (now->next) {
+        now = now->next;
+    }
+    q->tail = now;
 }
